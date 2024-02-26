@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Day
+{% endblock %}
+
+{% block content %}
+  <div class="day-navigation">
+    <a href="{{ url_for('views.day_view', date=prev_day) }}" class="btn btn-primary">Previous Day</a>
+    <a href="{{ url_for('views.day_view', date=next_day) }}" class="btn btn-primary">Next Day</a>
+  </div>
+  <h1>Day Content</h1>
+
+  <!-- Customize the content based on your day_data -->
+  <p>Date: {{ day.date }}</p>
+  <p>Day ID: {{ day.id }}</p>
+
+  <h2>Snacks for the Day</h2>
+  <ul>
+    {% for snack in day.snacks %}
+      <li>{{ snack.name }} - Calories: {{ snack.calories }}, Carbs: {{ snack.carbs }}, Protein: {{ snack.protein }}, Fats: {{ snack.fats }}
+        <form action="{{ url_for('views.delete_snack_day', snack_id=snack.id) }}" method="post">
+          <button type="submit" class="btn btn-danger">Delete</button>
+      </form>
+      </li>
+    {% endfor %}
+  </ul>
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createSnackModal">
+    Create Snack
+  </button>
+  <div class="modal fade" id="createSnackModal" tabindex="-1" role="dialog" aria-labelledby="createSnackModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createSnackModalLabel">Create Snack</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Form for creating a snack -->
+          <form method="post" id="createSnackForm" action="{{ url_for('views.create_snack_day') }}">
+            <div class="form-group">
+              <label for="snackName">Snack Name</label>
+              <input type="text" class="form-control" id="snackName" name="snackName" required />
+            </div>
+            <div class="form-group">
+              <label for="snackCalories">Calories</label>
+              <input type="number" class="form-control" id="snackCalories" name="snackCalories" required />
+            </div>
+            <div class="form-group">
+              <label for="snackCarbs">Carbs</label>
+              <input type="number" class="form-control" id="snackCarbs" name="snackCarbs" required />
+            </div>
+            <div class="form-group">
+              <label for="snackProteins">Protein</label>
+              <input type="number" class="form-control" id="snackProteins" name="snackProteins" required />
+            </div>
+            <div class="form-group">
+              <label for="snackFats">Fats</label>
+              <input type="number" class="form-control" id="snackFats" name="snackFats" required />
+            </div>
+            <input type="hidden" name="dayId" value="{{ day.id }}">
+            <button type="submit" class="btn btn-primary">Submit Snack</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addExistingSnackModal">Add Existing Snack</button>
+
+<!-- Add Existing Snack Modal -->
+<div class="modal fade" id="addExistingSnackModal" tabindex="-1" role="dialog" aria-labelledby="addExistingSnackModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addExistingSnackModalLabel">Add Existing Snack</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{{ url_for('views.add_existing_snack', date=day.date) }}">
+          <input type="hidden" name="date" value="{{ day.id }}">
+          <div class="form-group">
+            <label for="existingSnackSelect">Choose a Snack</label>
+            <select class="form-control" id="existingSnackSelect" name="snackId">
+              {% for snack in snacks_without_day %}
+              <option value="{{ snack.id }}">{{ snack.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Snack</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Meal Button -->
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createMealModal">Create Meal</button>
+
+<!-- Create Meal Modal -->
+<div class="modal fade" id="createMealModal" tabindex="-1" aria-labelledby="createMealModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="post" id="createMealForm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createMealModalLabel">Create Meal</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Meal Name -->
+          <div class="mb-3">
+            <label for="mealName" class="form-label">Meal Name</label>
+            <input type="text" class="form-control" id="mealName" name="mealName" required>
+          </div>
+          <!-- Ingredients Section -->
+          <div id="ingredientsSection">
+            <!-- JavaScript will append ingredient forms here -->
+          </div>
+          <button type="button" onclick="addIngredientForm()">Add Ingredient</button>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Create Meal</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+  <!-- Add other content based on your day_data -->
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+  <script src="{{ url_for('static', filename = 'day.js') }}"></script>
+{% endblock %}

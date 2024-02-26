@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block title %}Nutrition Tracker{% endblock %}
+
+{% block content %}
+  <h2>Nutrition Tracker</h2>
+
+  <!-- Section for Creating New Objects -->
+  <section>
+    <h3>Create New</h3>
+
+    <!-- Button to Open Create Snack Modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createSnackModal">
+      Create Snack
+    </button>
+
+    <!-- Button to Open Create Ingredient Modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createIngredientModal">
+      Create Ingredient
+    </button>
+  </section>
+
+  <!-- Section for Viewing Saved Objects -->
+  <section>
+    <h3>Saved Items</h3>
+
+    <!-- Display Saved Meals -->
+    <div id="saved-meals">
+      <!-- Dynamically load saved Meals here -->
+    </div>
+
+    <!-- Display Saved Snacks -->
+    <div id="saved-ingredients">
+      <p> Saved Ingredients with no Meal ID </p>
+        <ul>
+            {% for ingredient in ingredients %}
+            <li>{{ ingredient.name }}</li>
+            <!-- Add other ingredient details as necessary -->
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div>
+      <p> Saved Snacks with a Day ID </p>
+      <ul>
+        {% for snack in snacksDay %}
+        <li>
+          {{ snack.name }} {{ snack.id }} {{ snack.day_id }}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <!-- Display Saved Ingredients -->
+    <div id="saved-snacksNoDay">
+      <p> Saved Snacks without a Day ID </p>
+      <ul>
+        {% for snack in snacksNoDay %}
+        <li>{{ snack.name }} {{ snack.id }} {{ snack.day_id }}
+            <form action="{{ url_for('views.delete_snack', snack_id=snack.id) }}" method="post">
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    </div>
+  </section>
+
+  <!-- Modals -->
+  <!-- Modal for Creating New Snack -->
+  <div class="modal fade" id="createSnackModal" tabindex="-1" role="dialog" aria-labelledby="createSnackModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createSnackModalLabel">Create New Snack</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Snack Form -->
+          <form method="post" action="{{ url_for('views.create_snack') }}">
+            <div class="form-group">
+                <label for="ingredientName">Snack Name</label>
+                <input type="text" class="form-control" id="snackName" name="snackName" required>
+              </div>
+              <div class="form-group">
+                <label for="ingredientCalories">Calories</label>
+                <input type="number" class="form-control" id="snackCalories" name="snackCalories" required>
+              </div>
+              <div class="form-group">
+                  <label for="ingredientCalories">Carbs (g)</label>
+                  <input type="number" class="form-control" id="snackCarbs" name="snackCarbs" required>
+              </div>
+              <div class="form-group">
+                  <label for="ingredientCalories">Proteins (g)</label>
+                  <input type="number" class="form-control" id="snackProteins" name="snackProteins" required>
+              </div>
+              <div class="form-group">
+                  <label for="ingredientCalories">Fats (g)</label>
+                  <input type="number" class="form-control" id="snackFats" name="snackFats" required>
+              </div>
+            <!-- Add more fields for carbs, proteins, fats as needed -->
+            <button type="submit" class="btn btn-primary">Create Snack</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Creating New Ingredient -->
+  <div class="modal fade" id="createIngredientModal" tabindex="-1" role="dialog" aria-labelledby="createIngredientModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createIngredientModalLabel">Create New Ingredient</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Ingredient Form -->
+          <form method="post" action="{{ url_for('views.create_ingredient') }}">
+            <div class="form-group">
+              <label for="ingredientName">Ingredient Name</label>
+              <input type="text" class="form-control" id="ingredientName" name="ingredientName" required>
+            </div>
+            <div class="form-group">
+              <label for="ingredientCalories">Calories</label>
+              <input type="number" class="form-control" id="ingredientCalories" name="ingredientCalories" required>
+            </div>
+            <div class="form-group">
+                <label for="ingredientCalories">Carbs (g)</label>
+                <input type="number" class="form-control" id="ingredientCarbs" name="ingredientCarbs" required>
+            </div>
+            <div class="form-group">
+                <label for="ingredientCalories">Proteins (g)</label>
+                <input type="number" class="form-control" id="ingredientProteins" name="ingredientProteins" required>
+            </div>
+            <div class="form-group">
+                <label for="ingredientCalories">Fats (g)</label>
+                <input type="number" class="form-control" id="ingredientFats" name="ingredientFats" required>
+            </div>
+            <!-- Add more fields for carbs, proteins, fats as needed -->
+            <button type="submit" class="btn btn-primary">Create Ingredient</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
